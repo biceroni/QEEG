@@ -3,7 +3,9 @@ version = "4.1"
 
 # ================================================================== #
 # Changelog
-# 
+# [Kinsey] 4.1.1 -- 2020.12.21 --
+#                *Fixed bug in updating exclude_channels when appending badspectra
+#
 # [Kinsey] 4.1.0 -- 2020.07.16 --
 #                * Added individualized frequency band functionality
 #                  to better identify IAFs and draw frequency bands 
@@ -533,7 +535,12 @@ analyze.logfile <- function(subject, session, sampling=128, window=2, sliding=0.
 		                                   "Reason" = rep("BadSpectrum", length(badspectra)),
 		                                   "ExcludedFrom" = rep("WholeHeadIAF, Network Power and Coherence", length(badspectra)))
 		  } else {
-		    exclude_channels <- rbind(cbind(subject, names(badspectra), "BadSpectrum", "WholeHeadIAF, Network Power and Coherence"))
+		    exclude_channels <- rbind(exclude_channels,
+		                              data.frame("Subject" = rep(subject, length(badspectra)),
+		                                         "Session" = rep(session, length(badspectra)),
+		                                         "Channel" = names(badspectra),
+		                                         "Reason" = rep("BadSpectrum", length(badspectra)),
+		                                         "ExcludedFrom" = rep("WholeHeadIAF, Network Power and Coherence", length(badspectra))))
 		  }
 		}
 		
